@@ -7,6 +7,10 @@ $(document).ready(function() {
   $('.game-piece').click(function() {
     // we want to be able to reference the initially clicked piece later
     var clickedPiece = $(this);
+    // after a piece is "solved", as in a match was found, you cant click that box again - weird things happen
+    if(clickedPiece.hasClass('solved')) {
+      return;
+    }
     // set the background to the image assigned to this card, when its selected
     clickedPiece.css('background-image', 'url(\'' + clickedPiece.data('image') + '\')').addClass('opened-number').addClass('match');
     // matching logic
@@ -17,7 +21,8 @@ $(document).ready(function() {
         $('.game-piece.opened').css('background-image', 'url(\'' + $('.game-piece.opened').data('image') + '\')').addClass('match');
 
         setTimeout(function() {
-          $('.message').show().empty().removeClass('error').addClass('success').append('You got a match! Did they guess the puzzle? <a href="#" class="yes">Yes</a> | <a href="#" class="no">No</a>');
+          $('.message').show().empty().removeClass('error').addClass('success').append('You got a match!');
+          $('.match').css('background','transparent').addClass('solved').removeClass('opened').removeClass('match').bind('click', false);
         }, 500);
       // otherwise, we don't have a match, reset the pieces
       } else {
@@ -36,31 +41,9 @@ $(document).ready(function() {
       $(this).addClass('opened');
     }
   });
-  // check for a click on the yes option for a match
-  $('body').on('click', '.yes', function() {
-    $('.match').css('background','transparent').removeClass('opened').removeClass('match');
-    $('.message').hide();
-  });
-  // check for a click on the no option for a match
-  $('body').on('click', '.no', function() {
-    $('.match').css('background-image','url(\'assets/images/card-back.jpg\')').removeClass('opened').removeClass('opened-number').removeClass('match');
-    $('.message').hide();
-  });
   // solve the puzzle
   $('.solve').click(function() {
     $('.game-piece').css('background','transparent');
     $('.number').hide();
-  });
-  // increase points
-  $('.plus').click(function() {
-    var element = $(this).siblings('.score');
-    var score = parseInt(element.text());
-    element.text(score+100);
-  });
-  // decrease points
-  $('.minus').click(function() {
-    var element = $(this).siblings('.score');
-    var score = parseInt(element.text());
-    element.text(score-100);
   });
 });
